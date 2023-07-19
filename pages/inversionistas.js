@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export default function Registro() {
+  const router = useRouter();
+
   const [datos, setDatos] = useState({
     codigo_usuario: '',
     nombres: '',
@@ -18,19 +21,21 @@ export default function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/registro', datos);
+      const response = await axios.post('http://localhost:8000/api/registro_inversionistas', datos);
       console.log(response.data);
-      // Realizar acciones adicionales después de un registro exitoso
+
+      // Redirigir a la página siguiente pasando el código de usuario como parámetro en la URL
+      router.push(`/CompletarDatos?codigo_usuario=${response.data.codigo_usuario}`);
     } catch (error) {
       console.error(error.response.data);
       // Manejar errores durante el registro
     }
   };
-
   return (
     <div>
       <h1>Registro de Usuario Inversionistas</h1>
       <form onSubmit={handleSubmit}>
+        {/* Campos del formulario */}
         <input type="text" name="codigo_usuario" placeholder="Código de usuario" value={datos.codigo_usuario} onChange={handleChange} required />
         <input type="text" name="nombres" placeholder="Nombres" value={datos.nombres} onChange={handleChange} required />
         <input type="text" name="apellidos" placeholder="Apellidos" value={datos.apellidos} onChange={handleChange} required />
